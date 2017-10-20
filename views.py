@@ -29,21 +29,25 @@ def register_view(request):
 
 
 def login_view(request):
+    error = None
     if request.method == "POST":
-        form = Login(request.POST)
+        form = Login(request.POST or None)
         if form.is_valid():
             user = authenticate(username=form.cleaned_data['username'],
                                 password=form.cleaned_data['password'])
             if user is not None:
-                login(request, user)
-                return redirect('/dashboard')
+                if user.profile.type == 'p':
+                    login(request, user)
+                    return redirect('/dashboard')
+                else:
+                    error = 'You have tried to login to the wrong portal'
             else:
-                return render(request, 'EMS/login.html', {'form': form, 'error': 'Incorrect Username and password'})
+                error = 'Incorrect Username and password'
         else:
-            return render(request, 'EMS/login.html', {'form': form, 'error': 'Invalid Data Entered'})
+            error = 'Invalid Data Entered'
     else:
         form = Login()
-    return render(request, 'EMS/login.html', {'form': form})
+    return render(request, 'EMS/login.html', {'form': form, 'error': error})
 
 
 @login_required(login_url='/login')

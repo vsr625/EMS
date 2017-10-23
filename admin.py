@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from EMS.models import Event, Participant, Coordinator, Faculty, SpecialGuest, EventParticipates
+from EMS.models import Event, Participant, Coordinator, Faculty, SpecialGuest, EventParticipates, EventCoordinates
 
 
 class EventAdmin(admin.ModelAdmin):
@@ -21,7 +21,7 @@ class CoordinatorAdmin(admin.ModelAdmin):
 
 
 class SpecialGuestAdmin(admin.ModelAdmin):
-    list_display = ('Name', 'Events', 'MailId', 'PhoneNo')
+    list_display = ('Name', 'MailId', 'PhoneNo')
 
 
 admin.site.site_header = "Event Management System Administration"
@@ -32,4 +32,4 @@ admin.site.register(Coordinator, CoordinatorAdmin)
 admin.site.register(Faculty, FacultyAdmin)
 admin.site.register(SpecialGuest, SpecialGuestAdmin)
 admin.site.register(EventParticipates)
-
+admin.site.register(EventCoordinates)

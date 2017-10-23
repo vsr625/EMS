@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        a:hover {
+            text-decoration: none;
+        }
+        .custom {
+            width: 190px !important;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3>Event Management System Administration</h3>
+    <br>
+    <a href="{% url 'create_event' %}">
+        <input class="btn btn-info btn-md custom" type="button" value="Create New Event">
+    </a>
+    <a href="{% url 'create_faculty' %}">
+        <input class="btn btn-info btn-md  custom" type="button" value="Create New Faculty">
+    </a>
+    <a href="{% url 'create_sp' %}">
+        <input class="btn btn-info btn-md  custom" type="button" value="Create New Special Guest">
+    </a>
+    <a href="{% url 'create_co' %}">
+        <input class="btn btn-info btn-md custom" type="button" value="Create New Coordinator">
+    </a>
+    <br>
+    <br>
+    {% if message %}
+        <div class="alert alert-success alert-dismissable">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{ message }}
+        </div>
+    {% endif %}
+    <br>
+    <strong>List of Events</strong>
+    {% if events %}
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Venue</th>
+                <th>Prize</th>
+                <th>Judges</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.Name }}</td>
+                    <td>{{ event.Date }}</td>
+                    <td>{{ event.Time }}</td>
+                    <td>{{ event.get_Venue_display }}</td>
+                    <td>{{ event.Prize }}</td>
+                    <td>{{ event.Judge.Name }}</td>
+                    <td>
+                        <a href="{% url 'view_event' event_id=event.EventId %}">
+                            <input type="button" class="btn btn-info center-block" value="View Details">
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'update_event' event_id=event.EventId %}">
+                            <input type="button" class="btn btn-info center-block" value="Update Event">
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'delete_event' event_id=event.EventId %}">
+                            <input type="button" class="btn btn-danger center-block" value="Delete">
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            No events to display
+        </div>
+    {% endif %}
+    <a href="{% url 'logout' %}">
+        <input class="btn btn-warning btn-md" type="button" value="logout">
+    </a>
+</div>
+</body>
+</html>

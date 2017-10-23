@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Participant Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        a:hover {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2> Welcome {{ name }},</h2>
+    <h3> Event List</h3>
+    <br>
+    {% if message %}
+        <div class="alert alert-success alert-dismissable">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{ message }}
+        </div>
+        <br>
+    {% endif %}
+    <strong>Register Events:</strong>
+    {% if exclude %}
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Venue</th>
+                <th>Prize</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in exclude %}
+                <tr>
+                    <td>{{ event.Name }}</td>
+                    <td>{{ event.Date }}</td>
+                    <td>{{ event.Time }}</td>
+                    <td>{{ event.get_Venue_display }}</td>
+                    <td>{{ event.Prize }}</td>
+                    <td>
+                        <a href="{% url 'register_event' event_id=event.EventId %}">
+                            <input type="button" class="btn btn-info btn-md btn-block" value="Register">
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            No more events to register
+        </div>
+    {% endif %}
+    <strong>Already Registered Events:</strong>
+    {% if include %}
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Venue</th>
+                <th>Prize</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in include %}
+                <tr>
+                    <td>{{ event.Name }}</td>
+                    <td>{{ event.Date }}</td>
+                    <td>{{ event.Time }}</td>
+                    <td>{{ event.get_Venue_display }}</td>
+                    <td>{{ event.Prize }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            You haven't registered to any events
+        </div>
+    {% endif %}
+    <a href="{% url 'logout' %}">
+        <input class="btn btn-warning btn-md" type="button" value="Logout">
+    </a>
+</div>
+</body>
+</html>
+
+

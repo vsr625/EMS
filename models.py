@@ -1,8 +1,9 @@
 import uuid
 
 from django.contrib.auth.models import User
+from django.core.validators import MinLengthValidator
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 
 
 # Create your models here.
@@ -18,7 +19,7 @@ class Event(models.Model):
         ('m', 'Mathematics Department')
     )
     EventId = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    Name = models.CharField(max_length=20, unique=True, help_text="Event Name")
+    Name = models.CharField(max_length=20, unique=True)
     Date = models.DateField()
     Time = models.TimeField()
     Venue = models.CharField(max_length=15, choices=VENUE_LIST, default='s')
@@ -26,6 +27,7 @@ class Event(models.Model):
     Prize = models.IntegerField(default=0)
     Judge = models.ForeignKey('Faculty', on_delete=None, blank=True, null=True, default=None)
     Winner = models.ForeignKey('Participant', on_delete=None, blank=True, null=True, default=None)
+    SpecialGuest = models.OneToOneField('SpecialGuest', on_delete=None, default=None, blank=True, null=True)
 
     class Meta:
         ordering = ["-Date"]
@@ -36,7 +38,7 @@ class Event(models.Model):
 
 class Faculty(models.Model):
     FacultyId = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    Name = models.CharField(max_length=20, help_text="Name of the Faculty")
+    Name = models.CharField(max_length=20)
     PhoneNo = models.IntegerField(unique=True)
     MailId = models.EmailField(unique=True)
     RegNo = models.CharField(unique=True, max_length=10, blank=True, null=True)
@@ -54,7 +56,7 @@ class Coordinator(models.Model):
     RegNo = models.CharField(unique=True, max_length=10)
     PhoneNo = models.IntegerField()
     MailId = models.EmailField(unique=True)
-    Password = models.CharField(max_length=25)
+    Password = models.CharField(max_length=25,validators=[MinLengthValidator(8)])
 
     class Meta:
         ordering = ["Name"]
@@ -63,10 +65,24 @@ class Coordinator(models.Model):
         return self.Name
 
 
+@receiver(post_save, sender=Coordinator)
+def save_co_user(sender, instance, created, **kwargs):
+    if created:
+        user = User.objects.create_user(username=instance.MailId, email=instance.MailId, password=instance.Password)
+        user.profile.type = 'c'
+        user.save()
+
+
+@receiver(post_delete, sender=Coordinator)
+def delete_co_user(sender, instance, **kwargs):
+    User.objects.filter(username=instance.MailId).delete()
+
+
+
 class Participant(models.Model):
     ID = models.UUIDField(primary_key=True, default=uuid.uuid4())
     Name = models.CharField(max_length=20)
-    Password = models.CharField(max_length=25)
+    Password = models.CharField(max_length=25,validators=[MinLengthValidator(8)])
     City = models.CharField(max_length=20)
     PhoneNo = models.IntegerField()
     College = models.CharField(max_length=20, blank=True, null=True)
@@ -79,13 +95,24 @@ class Participant(models.Model):
     class Meta:
         ordering = ["Name"]
 
+@receiver(post_save, sender=Participant)
+def save_p_user(sender, instance, created, **kwargs):
+    if created:
+        user = User.objects.create_user(username=instance.MailId, email=instance.MailId, password=instance.Password)
+        user.profile.type = 'p'
+        user.save()
+
+
+@receiver(post_delete, sender=Participant)
+def delete_p_user(sender, instance, **kwargs):
+    User.objects.filter(username=instance.MailId).delete()
+
 
 class SpecialGuest(models.Model):
     GuestID = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    Name = models.CharField(max_length=20, help_text="Name of the Guest")
+    Name = models.CharField(max_length=20)
     PhoneNo = models.IntegerField(default=None, null=False)
     MailId = models.EmailField(default=None, null=False, unique=True)
-    Events = models.OneToOneField(Event, on_delete=None, default=None, blank=None, null=True, help_text="Hosted by")
 
     def __str__(self):
         return self.Name
@@ -95,16 +122,22 @@ class SpecialGuest(models.Model):
 
 
 class EventParticipates(models.Model):
-    Event = models.ForeignKey(Event)
-    Participant = models.ForeignKey(Participant)
+    Event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    Participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.Participant.Name + '-' + self.Event.Name
 
     class Meta:
         unique_together = ('Event', 'Participant')
 
 
 class EventCoordinates(models.Model):
-    Event = models.ForeignKey(Event)
-    Coordinator = models.ForeignKey(Coordinator)
+    Event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    Coordinator = models.ForeignKey(Coordinator, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.Coordinator.Name + '-' + self.Event.Name
 
     class Meta:
         unique_together = ('Event', 'Coordinator')
@@ -124,5 +157,4 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-
 

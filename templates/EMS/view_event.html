@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Participant Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        a:hover {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3>Event Details</h3><br>
+    <strong>Name: </strong>{{ event.Name }} <br>
+    <strong>Date: </strong>{{ event.Date }} <br>
+    <strong>Time: </strong>{{ event.Time }} <br>
+    <strong>Venue: </strong>{{ event.get_Venue_display }} <br>
+    <strong>Judge: </strong>{{ event.Judge.Name }} <br>
+    <strong>Registration Fee: </strong>{{ event.RegistrationFee }} <br>
+    <strong>Prize: </strong>{{ event.Prize }} <br>
+    <strong>Coordinaters: </strong>
+    {% for c in coord %}
+        {{ c.Coordinator.Name }}
+    {% endfor %}
+    <br>
+    <strong>Total Participants Registered: </strong>{{ participants.count }} <br>
+    <br>
+    <h4>List of Participants</h4>
+    {% if participants.count == 0 %}
+        <div class="alert alert-info">
+            No participants registered for this event
+        </div>
+    {% else %}
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>MailId</th>
+                <th>PhoneNo</th>
+                <th>City</th>
+                <th>RegNo</th>
+                <th>College</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for p in participants %}
+                <tr>
+                    <td>{{ p.Participant.Name }}</td>
+                    <td>{{ p.Participant.MailId }}</td>
+                    <td>{{ p.Participant.PhoneNo }}</td>
+                    <td>{{ p.Participant.City }}</td>
+                    <td>{{ p.Participant.RegNo }}</td>
+                    <td>{{ p.Participant.College }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    <a href="{% url 'dashboard_a' %}">
+        <input type="button" class="btn btn-info" value="Back to Dashboard">
+    </a>
+    <a href="{% url 'delete_event' event_id=event.EventId %}">
+        <input type="button" class="btn btn-danger" value="Delete this Event">
+    </a>
+</div>
+</body>
+</html>

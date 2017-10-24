@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
-from EMS.models import Participant, EventParticipates, Event, EventCoordinates
+from EMS.models import Participant, EventParticipates, Event, EventCoordinates, Coordinator
 from .forms import RegisterParticipant, Login, EventForm, FacultyForm, SPForm, UpdateWinner, CoordinatorForm
 
 
@@ -100,10 +100,15 @@ def dashboard_p_view(request):
 @login_required(login_url='/login_c')
 def dashboard_c_view(request):
     if request.user.profile.type == 'c':
+        message = request.session.get('message')
+        request.session['message'] = None
+        coordinator = Coordinator.objects.get(MailId=request.user.username)
+        eventcoordinator = EventCoordinates.objects.filter(Coordinator=coordinator)
+        e = eventcoordinator.values_list('Event', flat=True)
         date_now = datetime.date(datetime.now())
-        past_events = Event.objects.filter(Date__lt=date_now)
-        upcoming_events = Event.objects.filter(Date__gte=date_now)
-        return render(request, 'EMS/dashboard_c.html', {'past_events': past_events, 'upcoming_events': upcoming_events})
+        past_events = Event.objects.filter(Date__lt=date_now).filter(EventId__in=e)
+        upcoming_events = Event.objects.filter(Date__gte=date_now).filter(EventId__in=e)
+        return render(request, 'EMS/dashboard_c.html', {'past_events': past_events, 'upcoming_events': upcoming_events,'message':message})
     else:
         return redirect('dashboard_p')
 
@@ -180,17 +185,16 @@ def create_sp_view(request):
 def update_winner(request, event_id):
     if request.user.profile.type == 'c':
         if request.method == 'POST':
-            form = UpdateWinner(request.POST)
+            form = UpdateWinner(request.POST, instance=Event.objects.get(EventId=event_id))
             if form.is_valid:
-                print(event_id)
-                event = Event.objects.get(EventId=event_id)
-                event.Winner = form.cleaned_data['Winner']
-                event.save()
-            else:
+                form.save()
+                request.session['message'] = 'Succesfully updated event ' + form.cleaned_data['Name']
                 return redirect('dashboard_c')
         else:
             event = Event.objects.get(EventId=event_id)
-            form = UpdateWinner(instance=event)
+            event_p = EventParticipates.objects.filter(Event=event).values_list('Participant', flat=True)
+            event_par = Participant.objects.filter(ID__in=event_p)
+            form = UpdateWinner(instance=event, e=event_par)
             return render(request, 'EMS/update_winner.html', {'form': form})
     else:
         return redirect('dashboard_p')
@@ -282,12 +286,10 @@ def create_co_view(request):
 
 @login_required(login_url='/login_a')
 def view_event(request, event_id):
-    if request.user.profile.type == 'a':
+    if request.user.profile.type == 'a' or request.user.profile.type == 'c':
         event = Event.objects.get(EventId=event_id)
         coord = EventCoordinates.objects.filter(Event=event)
         participants = EventParticipates.objects.filter(Event=event)
-        for c in coord:
-            print(c.Coordinator.Name)
-        return render(request, 'EMS/view_event.html',{ 'event':event, 'participants':participants, 'coord':coord})
+        return render(request, 'EMS/view_event.html',{ 'event':event, 'participants':participants, 'coord':coord, 'type':request.user.profile.type})
     else:
         return redirect('home')

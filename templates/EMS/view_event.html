@@ -61,12 +61,18 @@
             </tbody>
         </table>
     {% endif %}
-    <a href="{% url 'dashboard_a' %}">
-        <input type="button" class="btn btn-info" value="Back to Dashboard">
-    </a>
-    <a href="{% url 'delete_event' event_id=event.EventId %}">
-        <input type="button" class="btn btn-danger" value="Delete this Event">
-    </a>
+    {% if type == 'a' %}
+         <a href="{% url 'dashboard_a' %}">
+            <input type="button" class="btn btn-info" value="Back to Dashboard">
+        </a>
+        <a href="{% url 'delete_event' event_id=event.EventId %}">
+            <input type="button" class="btn btn-danger" value="Delete this Event">
+        </a>
+    {% else %}
+        <a href="{% url 'dashboard_c' %}">
+            <input type="button" class="btn btn-info" value="Back to Dashboard">
+        </a>
+    {% endif %}
 </div>
 </body>
 </html>

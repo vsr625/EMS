@@ -1,8 +1,8 @@
 from django import forms
 from django.core.validators import MinLengthValidator
+from django.forms.utils import ErrorList
 
-
-from .models import Participant, Event, Faculty, SpecialGuest, Coordinator
+from .models import Participant, Event, Faculty, SpecialGuest, Coordinator, EventParticipates
 from django.forms import ModelForm
 
 
@@ -83,13 +83,18 @@ class SPForm(ModelForm):
 
 
 class UpdateWinner(ModelForm):
+    def __init__(self, *args, **kwargs):
+        e = kwargs.pop('e', '')
+        super(UpdateWinner, self).__init__(*args, **kwargs)
+        self.fields['Winner']= forms.ModelChoiceField(queryset=e, widget=forms.Select(attrs={'class': 'form-control'}))
+
     class Meta:
         model = Event
         fields = ['Name', 'Winner']
         widgets = {
             'Name': forms.TextInput(attrs={'readonly': 'readonly','class': 'form-control'}),
-            'Winner': forms.Select(attrs={'class': 'form-control'})
         }
+
 
 class CoordinatorForm(ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), validators=[MinLengthValidator(8)])

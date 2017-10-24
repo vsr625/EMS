@@ -7,20 +7,111 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        a:hover {
+            text-decoration: none;
+        }
+
+        .custom {
+            width: 190px !important;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <h2> Past Events</h2>
-    {% for e in past_events %}
-        <h3> {{ e.Name }}</h3>
-        <a href="{% url 'update_winner' e.EventId %}">
-            <input type="button" value="Update winner for this Event">
-        </a>
-    {% endfor %}
-    <h2> Upcoming Events</h2>
-    {% for e in upcoming_events %}
-        <h3> {{ e.Name }}</h3>
-    {% endfor %}
+    <br>
+    <h3>Event Management System</h3>
+    <h4>Coordinator console</h4>
+    {% if message %}
+        <div class="alert alert-success alert-dismissable">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{ message }}
+        </div>
+    {% endif %}
+    <br>
+    <strong>Past Events</strong>
+    {% if past_events %}
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Venue</th>
+                <th>Prize</th>
+                <th>Judges</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in past_events %}
+                <tr>
+                    <td>{{ event.Name }}</td>
+                    <td>{{ event.Date }}</td>
+                    <td>{{ event.Time }}</td>
+                    <td>{{ event.get_Venue_display }}</td>
+                    <td>{{ event.Prize }}</td>
+                    <td>{{ event.Judge.Name }}</td>
+                    <td>
+                        <a href="{% url 'view_event' event_id=event.EventId %}">
+                            <input type="button" class="btn btn-info center-block" value="View Event">
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'update_winner' event_id=event.EventId %}">
+                            <input type="button" class="btn btn-danger center-block" value="Update Winner">
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            No events to display
+        </div>
+    {% endif %}
+    <strong> Upcoming Events</strong>
+    {% if upcoming_events %}
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Venue</th>
+                <th>Prize</th>
+                <th>Judges</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in upcoming_events %}
+                <tr>
+                    <td>{{ event.Name }}</td>
+                    <td>{{ event.Date }}</td>
+                    <td>{{ event.Time }}</td>
+                    <td>{{ event.get_Venue_display }}</td>
+                    <td>{{ event.Prize }}</td>
+                    <td>{{ event.Judge.Name }}</td>
+                    <td>
+                        <a href="{% url 'view_event' event_id=event.EventId %}">
+                            <input type="button" class="btn btn-info center-block" value="View Details">
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            No events to display
+        </div>
+    {% endif %}
+    <a href="{% url 'logout' %}">
+        <input class="btn btn-warning btn-md" type="button" value="logout">
+    </a>
 </div>
 </body>
 </html>

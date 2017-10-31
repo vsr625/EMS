@@ -87,7 +87,7 @@ def dashboard_p_view(request):
         user_name = user.Name
         registered_event_ids = EventParticipates.objects.filter(Participant=user).values_list('Event', flat=True)
         registered = Event.objects.filter(EventId__in=registered_event_ids)
-        unregistered = Event.objects.exclude(EventId__in=[e for e in registered_event_ids]).filter(Date__gt=datetime.date(datetime.now()))
+        unregistered = Event.objects.exclude(EventId__in=registered_event_ids).filter(Date__gt=datetime.date(datetime.now()))
         return render(request, 'EMS/dashboard_p.html', {'include': registered, 'exclude': unregistered,
                                                         'name': user_name, 'message':message})
     else:
@@ -134,12 +134,12 @@ def create_event_view(request):
                 coordinator = form.cleaned_data['Coordinator']
                 form.save()
                 for c in coordinator:
-                    eventcor = EventCoordinates(Event=Event.objects.get(Name=form.cleaned_data['Name']),Coordinator=c)
-                    eventcor.save()
+                    new_event_coordinator = EventCoordinates(Event=Event.objects.get(Name=form.cleaned_data['Name']),Coordinator=c)
+                    new_event_coordinator.save()
                 request.session['message'] = 'Successfully created ' + form.cleaned_data['Name']
                 return redirect('dashboard_a')
         else:
-            form = EventForm(create=True)
+            form = EventForm()
         return render(request, 'EMS/create_event.html', {'form': form, 'heading': 'Create New Event'})
     else:
         return redirect('home')

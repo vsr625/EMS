@@ -47,10 +47,9 @@ class EventForm(ModelForm):
                                          required=False)
 
     def __init__(self, *args, **kwargs):
-        create = kwargs.pop('create', False)
         super(EventForm, self).__init__(*args, **kwargs)
-        if create:
-            self.fields['SpecialGuest'].queryset = SpecialGuest.objects.filter(special_guest__isnull=True)
+        self.fields['SpecialGuest'].queryset = SpecialGuest.objects.filter(Q(special_guest__isnull=True)|Q(special_guest=self.instance))
+        # Don't know why only this works here
 
     class Meta:
         model = Event

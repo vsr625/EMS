@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-
 from EMS.models import Event, Participant, Coordinator, Faculty, SpecialGuest, EventParticipates, EventCoordinates
 
 

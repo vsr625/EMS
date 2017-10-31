@@ -7,10 +7,11 @@ from .models import Participant, Event, Faculty, SpecialGuest, Coordinator, Even
 from django.forms import ModelForm
 
 
-
 class RegisterParticipant(ModelForm):
-    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}),validators=[MinLengthValidator(8)])
-    field_order = ['Name', 'Password','confirm_password','City', 'PhoneNo', 'College', 'MailId', 'RegNo']
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+                                       validators=[MinLengthValidator(8)])
+    field_order = ['Name', 'Password', 'confirm_password', 'City', 'PhoneNo', 'College', 'MailId', 'RegNo']
+
     class Meta:
         model = Participant
         fields = ['Name', 'Password', 'City', 'PhoneNo', 'College', 'MailId', 'RegNo']
@@ -24,7 +25,6 @@ class RegisterParticipant(ModelForm):
             'City': forms.TextInput(attrs={'class': 'form-control'})
         }
 
-
     def clean(self):
         cleaned_data = super(RegisterParticipant, self).clean()
         password = cleaned_data.get("Password")
@@ -33,22 +33,24 @@ class RegisterParticipant(ModelForm):
         if password != confirm_password:
             raise forms.ValidationError(
                 "Entered passwords does not match"
-                 )
+            )
 
 
 class Login(forms.Form):
-    username = forms.CharField(label="Enter Mail Id", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
+    username = forms.CharField(label="Enter Mail Id", widget=forms.TextInput(attrs={'class': 'form-control'}),
+                               required=False)
     password = forms.CharField(label="Enter Password", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
 class EventForm(ModelForm):
     Coordinator = forms.ModelMultipleChoiceField(queryset=Coordinator.objects.all(),
-                                         widget=forms.CheckboxSelectMultiple(),
-                                         required=False)
+                                                 widget=forms.CheckboxSelectMultiple(),
+                                                 required=False)
 
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-        self.fields['SpecialGuest'].queryset = SpecialGuest.objects.filter(Q(special_guest__isnull=True)|Q(special_guest=self.instance))
+        self.fields['SpecialGuest'].queryset = SpecialGuest.objects.filter(
+            Q(special_guest__isnull=True) | Q(special_guest=self.instance))
         # Don't know why only this works here
 
     class Meta:
@@ -60,7 +62,7 @@ class EventForm(ModelForm):
             'Name': forms.TextInput(attrs={'class': 'form-control'}),
             'RegistrationFee': forms.NumberInput(attrs={'class': 'form-control'}),
             'Prize': forms.NumberInput(attrs={'class': 'form-control'}),
-            'Venue' : forms.Select(attrs={'class': 'form-control'}),
+            'Venue': forms.Select(attrs={'class': 'form-control'}),
             'Judge': forms.Select(attrs={'class': 'form-control'}),
             'SpecialGuest': forms.Select(attrs={'class': 'form-control'}),
         }
@@ -94,19 +96,22 @@ class UpdateWinner(ModelForm):
         e = kwargs.pop('e', None)
         super(UpdateWinner, self).__init__(*args, **kwargs)
         if e is not None:
-            self.fields['Winner'] = forms.ModelChoiceField(queryset=e, widget=forms.Select(attrs={'class': 'form-control'}))
+            self.fields['Winner'] = forms.ModelChoiceField(queryset=e,
+                                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Event
         fields = ['Name', 'Winner']
         widgets = {
-            'Name': forms.TextInput(attrs={'readonly': 'readonly','class': 'form-control'}),
+            'Name': forms.TextInput(attrs={'readonly': 'readonly', 'class': 'form-control'}),
         }
 
 
 class CoordinatorForm(ModelForm):
-    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), validators=[MinLengthValidator(8)])
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+                                       validators=[MinLengthValidator(8)])
     field_order = ['Name', 'MailId', 'RegNo', 'Password', 'confirm_password']
+
     class Meta:
         model = Coordinator
         fields = ['Name', 'RegNo', 'Password', 'PhoneNo', 'MailId']

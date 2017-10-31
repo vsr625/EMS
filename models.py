@@ -5,7 +5,6 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 
-
 # Create your models here.
 from django.dispatch import receiver
 
@@ -27,7 +26,8 @@ class Event(models.Model):
     Prize = models.IntegerField(default=0)
     Judge = models.ForeignKey('Faculty', on_delete=None, blank=True, null=True, default=None)
     Winner = models.ForeignKey('Participant', on_delete=None, blank=True, null=True, default=None)
-    SpecialGuest = models.OneToOneField('SpecialGuest', related_name='special_guest', on_delete=None, default=None, blank=True, null=True)
+    SpecialGuest = models.OneToOneField('SpecialGuest', related_name='special_guest', on_delete=None, default=None,
+                                        blank=True, null=True)
 
     class Meta:
         ordering = ["-Date"]
@@ -56,7 +56,7 @@ class Coordinator(models.Model):
     RegNo = models.CharField(unique=True, max_length=10)
     PhoneNo = models.IntegerField()
     MailId = models.EmailField(unique=True)
-    Password = models.CharField(max_length=25,validators=[MinLengthValidator(8)])
+    Password = models.CharField(max_length=25, validators=[MinLengthValidator(8)])
 
     class Meta:
         ordering = ["Name"]
@@ -78,11 +78,10 @@ def delete_co_user(sender, instance, **kwargs):
     User.objects.filter(username=instance.MailId).delete()
 
 
-
 class Participant(models.Model):
     ID = models.UUIDField(primary_key=True, default=uuid.uuid4())
     Name = models.CharField(max_length=20)
-    Password = models.CharField(max_length=25,validators=[MinLengthValidator(8)])
+    Password = models.CharField(max_length=25, validators=[MinLengthValidator(8)])
     City = models.CharField(max_length=20)
     PhoneNo = models.IntegerField()
     College = models.CharField(max_length=20, blank=True, null=True)
@@ -94,6 +93,7 @@ class Participant(models.Model):
 
     class Meta:
         ordering = ["Name"]
+
 
 @receiver(post_save, sender=Participant)
 def save_p_user(sender, instance, created, **kwargs):

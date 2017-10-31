@@ -41,7 +41,7 @@ def login_p_view(request):
             error = 'Invalid Data Entered'
     else:
         form = Login()
-    return render(request, 'EMS/login.html', {'form': form, 'error': error, 'user': 'Participant','message':message})
+    return render(request, 'EMS/login.html', {'form': form, 'error': error, 'user': 'Participant', 'message': message})
 
 
 def login_c_view(request):
@@ -62,7 +62,7 @@ def login_c_view(request):
             error = 'Invalid Data Entered'
     else:
         form = Login()
-    return render(request, 'EMS/login.html', {'form': form, 'error': error, 'user': 'Coordinator', 'message':message})
+    return render(request, 'EMS/login.html', {'form': form, 'error': error, 'user': 'Coordinator', 'message': message})
 
 
 @login_required(login_url='home')
@@ -87,9 +87,10 @@ def dashboard_p_view(request):
         user_name = user.Name
         registered_event_ids = EventParticipates.objects.filter(Participant=user).values_list('Event', flat=True)
         registered = Event.objects.filter(EventId__in=registered_event_ids)
-        unregistered = Event.objects.exclude(EventId__in=registered_event_ids).filter(Date__gt=datetime.date(datetime.now()))
+        unregistered = Event.objects.exclude(EventId__in=registered_event_ids).filter(
+            Date__gt=datetime.date(datetime.now()))
         return render(request, 'EMS/dashboard_p.html', {'include': registered, 'exclude': unregistered,
-                                                        'name': user_name, 'message':message})
+                                                        'name': user_name, 'message': message})
     else:
         return redirect('dashboard_c')
 
@@ -104,7 +105,8 @@ def dashboard_c_view(request):
         eventcoordinator = EventCoordinates.objects.filter(Coordinator=coordinator).values_list('Event', flat=True)
         past_events = Event.objects.filter(EventId__in=eventcoordinator).filter(Date__lt=date_now)
         upcoming_events = Event.objects.filter(EventId__in=eventcoordinator).filter(Date__gte=date_now)
-        return render(request, 'EMS/dashboard_c.html', {'past_events': past_events, 'upcoming_events': upcoming_events,'message':message})
+        return render(request, 'EMS/dashboard_c.html',
+                      {'past_events': past_events, 'upcoming_events': upcoming_events, 'message': message})
     else:
         return redirect('dashboard_p')
 
@@ -134,7 +136,8 @@ def create_event_view(request):
                 coordinator = form.cleaned_data['Coordinator']
                 form.save()
                 for c in coordinator:
-                    new_event_coordinator = EventCoordinates(Event=Event.objects.get(Name=form.cleaned_data['Name']),Coordinator=c)
+                    new_event_coordinator = EventCoordinates(Event=Event.objects.get(Name=form.cleaned_data['Name']),
+                                                             Coordinator=c)
                     new_event_coordinator.save()
                 request.session['message'] = 'Successfully created ' + form.cleaned_data['Name']
                 return redirect('dashboard_a')
@@ -214,30 +217,32 @@ def login_a_view(request):
             error = 'Invalid Data Entered'
     else:
         form = Login()
-    return render(request, 'EMS/login.html', {'form': form, 'error': error, 'user': 'Admin','message':message})
+    return render(request, 'EMS/login.html', {'form': form, 'error': error, 'user': 'Admin', 'message': message})
+
 
 @login_required(login_url='/login_a')
 def update_event(request, event_id):
     if request.user.profile.type == 'a':
         if request.method == 'POST':
-            form = EventForm(request.POST,instance=Event.objects.get(EventId=event_id))
+            form = EventForm(request.POST, instance=Event.objects.get(EventId=event_id))
             if form.is_valid():
                 form.save()
                 event = Event.objects.get(Name=form.cleaned_data['Name'])
                 EventCoordinates.objects.filter(Event=event).delete()
                 coordinator = form.cleaned_data['Coordinator']
                 for c in coordinator:
-                    eventcor = EventCoordinates(Event=Event.objects.get(Name=form.cleaned_data['Name']),Coordinator=c)
+                    eventcor = EventCoordinates(Event=Event.objects.get(Name=form.cleaned_data['Name']), Coordinator=c)
                     eventcor.save()
                 request.session['message'] = 'Successfully updated event ' + form.cleaned_data['Name']
                 return redirect('dashboard_a')
         else:
             event_cor = EventCoordinates.objects.filter(Event=Event.objects.get(EventId=event_id))
             form = EventForm(instance=Event.objects.get(EventId=event_id),
-                             initial={'Coordinator':event_cor.values_list('Coordinator', flat=True)})
-        return render(request, 'EMS/create_event.html', {'form': form, 'heading':'Update Event'})
+                             initial={'Coordinator': event_cor.values_list('Coordinator', flat=True)})
+        return render(request, 'EMS/create_event.html', {'form': form, 'heading': 'Update Event'})
     else:
         return redirect('home')
+
 
 @login_required(login_url='/login_a')
 def delete_event(request, event_id):
@@ -253,14 +258,13 @@ def delete_event(request, event_id):
         return redirect('home')
 
 
-
 @login_required(login_url='/login_a')
 def dashboard_a_view(request):
     message = request.session.get('message')
     request.session['message'] = None
     if request.user.profile.type == 'a':
         events = Event.objects.all()
-        return render(request, 'EMS/dashboard_a.html', {'name': 'Admin', 'events': events, 'message':message})
+        return render(request, 'EMS/dashboard_a.html', {'name': 'Admin', 'events': events, 'message': message})
     else:
         return redirect('home')
 
@@ -280,12 +284,14 @@ def create_co_view(request):
     else:
         return redirect('home')
 
+
 @login_required(login_url='/login_a')
 def view_event(request, event_id):
     if request.user.profile.type == 'a' or request.user.profile.type == 'c':
         event = Event.objects.get(EventId=event_id)
         coord = EventCoordinates.objects.filter(Event=event)
         participants = EventParticipates.objects.filter(Event=event)
-        return render(request, 'EMS/view_event.html',{ 'event':event, 'participants':participants, 'coord':coord, 'type':request.user.profile.type})
+        return render(request, 'EMS/view_event.html',
+                      {'event': event, 'participants': participants, 'coord': coord, 'type': request.user.profile.type})
     else:
         return redirect('home')

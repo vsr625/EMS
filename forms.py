@@ -1,5 +1,6 @@
 from django import forms
 from django.core.validators import MinLengthValidator
+from django.db.models import Q
 from django.forms.utils import ErrorList
 
 from .models import Participant, Event, Faculty, SpecialGuest, Coordinator, EventParticipates
@@ -44,6 +45,13 @@ class EventForm(ModelForm):
     Coordinator = forms.ModelMultipleChoiceField(queryset=Coordinator.objects.all(),
                                          widget=forms.CheckboxSelectMultiple(),
                                          required=False)
+
+    def __init__(self, *args, **kwargs):
+        create = kwargs.pop('create', False)
+        super(EventForm, self).__init__(*args, **kwargs)
+        if create:
+            self.fields['SpecialGuest'].queryset = SpecialGuest.objects.filter(special_guest__isnull=True)
+
     class Meta:
         model = Event
         fields = ['Name', 'Date', 'Time', 'Venue', 'RegistrationFee', 'Prize', 'Judge', 'SpecialGuest']

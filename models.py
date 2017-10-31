@@ -27,7 +27,7 @@ class Event(models.Model):
     Prize = models.IntegerField(default=0)
     Judge = models.ForeignKey('Faculty', on_delete=None, blank=True, null=True, default=None)
     Winner = models.ForeignKey('Participant', on_delete=None, blank=True, null=True, default=None)
-    SpecialGuest = models.OneToOneField('SpecialGuest', on_delete=None, default=None, blank=True, null=True)
+    SpecialGuest = models.OneToOneField('SpecialGuest', related_name='special_guest', on_delete=None, default=None, blank=True, null=True)
 
     class Meta:
         ordering = ["-Date"]
@@ -157,4 +157,3 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-

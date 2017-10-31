@@ -84,13 +84,10 @@ def dashboard_p_view(request):
         message = request.session.get('message')
         request.session['message'] = None
         user = Participant.objects.get(MailId=request.user.username)
-        user_id = user.ID
         user_name = user.Name
-        registered_events_ids = EventParticipates.objects.filter(Participant=user_id)
-        registered_ids_list = [e.Event.EventId for e in registered_events_ids]
-        unregistered_events_ids = Event.objects.exclude(EventId__in=registered_ids_list)
-        registered = Event.objects.filter(EventId__in=registered_ids_list)
-        unregistered = Event.objects.filter(EventId__in=unregistered_events_ids).filter(Date__gt=datetime.date(datetime.now()))
+        registered_event_ids = EventParticipates.objects.filter(Participant=user).values_list('Event', flat=True)
+        registered = Event.objects.filter(EventId__in=registered_event_ids)
+        unregistered = Event.objects.exclude(EventId__in=[e for e in registered_event_ids]).filter(Date__gt=datetime.date(datetime.now()))
         return render(request, 'EMS/dashboard_p.html', {'include': registered, 'exclude': unregistered,
                                                         'name': user_name, 'message':message})
     else:
@@ -103,11 +100,10 @@ def dashboard_c_view(request):
         message = request.session.get('message')
         request.session['message'] = None
         coordinator = Coordinator.objects.get(MailId=request.user.username)
-        eventcoordinator = EventCoordinates.objects.filter(Coordinator=coordinator)
-        e = eventcoordinator.values_list('Event', flat=True)
         date_now = datetime.date(datetime.now())
-        past_events = Event.objects.filter(Date__lt=date_now).filter(EventId__in=e)
-        upcoming_events = Event.objects.filter(Date__gte=date_now).filter(EventId__in=e)
+        eventcoordinator = EventCoordinates.objects.filter(Coordinator=coordinator).values_list('Event', flat=True)
+        past_events = Event.objects.filter(EventId__in=eventcoordinator).filter(Date__lt=date_now)
+        upcoming_events = Event.objects.filter(EventId__in=eventcoordinator).filter(Date__gte=date_now)
         return render(request, 'EMS/dashboard_c.html', {'past_events': past_events, 'upcoming_events': upcoming_events,'message':message})
     else:
         return redirect('dashboard_p')
@@ -143,7 +139,7 @@ def create_event_view(request):
                 request.session['message'] = 'Successfully created ' + form.cleaned_data['Name']
                 return redirect('dashboard_a')
         else:
-            form = EventForm()
+            form = EventForm(create=True)
         return render(request, 'EMS/create_event.html', {'form': form, 'heading': 'Create New Event'})
     else:
         return redirect('home')
@@ -192,9 +188,9 @@ def update_winner(request, event_id):
                 return redirect('dashboard_c')
         else:
             event = Event.objects.get(EventId=event_id)
-            event_p = EventParticipates.objects.filter(Event=event).values_list('Participant', flat=True)
-            event_par = Participant.objects.filter(ID__in=event_p)
-            form = UpdateWinner(instance=event, e=event_par)
+            participant_id_list = EventParticipates.objects.filter(Event=event).values_list('Participant', flat=True)
+            participant_list = Participant.objects.filter(ID__in=participant_id_list)
+            form = UpdateWinner(instance=event, e=participant_list)
             return render(request, 'EMS/update_winner.html', {'form': form})
     else:
         return redirect('dashboard_p')
@@ -239,7 +235,7 @@ def update_event(request, event_id):
             event_cor = EventCoordinates.objects.filter(Event=Event.objects.get(EventId=event_id))
             form = EventForm(instance=Event.objects.get(EventId=event_id),
                              initial={'Coordinator':event_cor.values_list('Coordinator', flat=True)})
-            return render(request, 'EMS/create_event.html', {'form': form, 'heading':'Update Event'})
+        return render(request, 'EMS/create_event.html', {'form': form, 'heading':'Update Event'})
     else:
         return redirect('home')
 

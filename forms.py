@@ -1,10 +1,9 @@
 from django import forms
 from django.core.validators import MinLengthValidator
 from django.db.models import Q
-from django.forms.utils import ErrorList
-
-from .models import Participant, Event, Faculty, SpecialGuest, Coordinator, EventParticipates
 from django.forms import ModelForm
+
+from .models import Participant, Event, Faculty, SpecialGuest, Coordinator
 
 
 class RegisterParticipant(ModelForm):

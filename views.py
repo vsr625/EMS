@@ -114,9 +114,8 @@ def dashboard_c_view(request):
 @login_required(login_url='/login_p')
 def register_event_view(request, event_id):
     if request.user.profile.type == 'p':
-        user_id = Participant.objects.get(MailId=request.user.username).ID
         event = Event.objects.get(EventId=event_id)
-        participant = Participant.objects.get(ID=user_id)
+        participant = Participant.objects.get(MailId=request.user.username)
         if event is not None and participant is not None:
             new_registration = EventParticipates(Event=event,
                                                  Participant=participant)
@@ -190,6 +189,10 @@ def update_winner(request, event_id):
                 request.session['message'] = 'Succesfully updated event ' + form.cleaned_data['Name']
                 return redirect('dashboard_c')
         else:
+            if not EventCoordinates.objects.filter(Coordinator=Coordinator.objects.get(MailId=request.user.username),
+                                                   Event=Event.objects.get(EventId=event_id)):
+                request.session['message'] = 'Unauthorized Access bastard'
+                return redirect('dashboard_c')
             event = Event.objects.get(EventId=event_id)
             participant_id_list = EventParticipates.objects.filter(Event=event).values_list('Participant', flat=True)
             participant_list = Participant.objects.filter(ID__in=participant_id_list)
@@ -287,11 +290,22 @@ def create_co_view(request):
 
 @login_required(login_url='/login_a')
 def view_event(request, event_id):
-    if request.user.profile.type == 'a' or request.user.profile.type == 'c':
+    if request.user.profile.type == 'a':
         event = Event.objects.get(EventId=event_id)
         coord = EventCoordinates.objects.filter(Event=event)
         participants = EventParticipates.objects.filter(Event=event)
         return render(request, 'EMS/view_event.html',
                       {'event': event, 'participants': participants, 'coord': coord, 'type': request.user.profile.type})
+    elif request.user.profile.type == 'c':
+        if not EventCoordinates.objects.filter(Coordinator=Coordinator.objects.get(MailId=request.user.username),
+                                               Event=Event.objects.get(EventId=event_id)):
+            request.session['message'] = 'Unauthorized Access bastard'
+            return redirect('dashboard_c')
+        event = Event.objects.get(EventId=event_id)
+        coord = EventCoordinates.objects.filter(Event=event)
+        participants = EventParticipates.objects.filter(Event=event)
+        return render(request, 'EMS/view_event.html',
+                      {'event': event, 'participants': participants, 'coord': coord,
+                       'type': request.user.profile.type})
     else:
         return redirect('home')

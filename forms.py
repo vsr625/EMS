@@ -36,7 +36,7 @@ class RegisterParticipant(ModelForm):
 
 
 class Login(forms.Form):
-    username = forms.CharField(label="Enter Mail Id", widget=forms.TextInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(label="Enter Mail Id", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
     password = forms.CharField(label="Enter Password", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
@@ -84,9 +84,10 @@ class SPForm(ModelForm):
 
 class UpdateWinner(ModelForm):
     def __init__(self, *args, **kwargs):
-        e = kwargs.pop('e', '')
+        e = kwargs.pop('e', None)
         super(UpdateWinner, self).__init__(*args, **kwargs)
-        self.fields['Winner']= forms.ModelChoiceField(queryset=e, widget=forms.Select(attrs={'class': 'form-control'}))
+        if e is not None:
+            self.fields['Winner'] = forms.ModelChoiceField(queryset=e, widget=forms.Select(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Event

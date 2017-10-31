@@ -186,7 +186,7 @@ def update_winner(request, event_id):
     if request.user.profile.type == 'c':
         if request.method == 'POST':
             form = UpdateWinner(request.POST, instance=Event.objects.get(EventId=event_id))
-            if form.is_valid:
+            if form.is_valid():
                 form.save()
                 request.session['message'] = 'Succesfully updated event ' + form.cleaned_data['Name']
                 return redirect('dashboard_c')
@@ -207,7 +207,7 @@ def login_a_view(request):
     if request.method == "POST":
         form = Login(request.POST or None)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data['username'],
+            user = authenticate(username='admin',
                                 password=form.cleaned_data['password'])
             if user is not None and user.profile.type == 'a':
                 login(request, user)
@@ -225,7 +225,7 @@ def update_event(request, event_id):
     if request.user.profile.type == 'a':
         if request.method == 'POST':
             form = EventForm(request.POST,instance=Event.objects.get(EventId=event_id))
-            if form.is_valid:
+            if form.is_valid():
                 form.save()
                 event = Event.objects.get(Name=form.cleaned_data['Name'])
                 EventCoordinates.objects.filter(Event=event).delete()

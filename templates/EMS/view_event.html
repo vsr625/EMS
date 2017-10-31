@@ -28,6 +28,9 @@
         {{ c.Coordinator.Name }}
     {% endfor %}
     <br>
+    {% if event.Winner is not None %}
+        <strong>Winner: </strong>{{ event.Winner.Name }}<br>
+    {% endif %}
     <strong>Total Participants Registered: </strong>{{ participants.count }} <br>
     <br>
     <h4>List of Participants</h4>

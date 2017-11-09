@@ -191,7 +191,7 @@ def update_winner(request, event_id):
         else:
             if not EventCoordinates.objects.filter(Coordinator=Coordinator.objects.get(MailId=request.user.username),
                                                    Event=Event.objects.get(EventId=event_id)):
-                request.session['message'] = 'Unauthorized Access bastard'
+                request.session['message'] = 'Unauthorized Access'
                 return redirect('dashboard_c')
             event = Event.objects.get(EventId=event_id)
             participant_id_list = EventParticipates.objects.filter(Event=event).values_list('Participant', flat=True)
@@ -299,7 +299,7 @@ def view_event(request, event_id):
     elif request.user.profile.type == 'c':
         if not EventCoordinates.objects.filter(Coordinator=Coordinator.objects.get(MailId=request.user.username),
                                                Event=Event.objects.get(EventId=event_id)):
-            request.session['message'] = 'Unauthorized Access bastard'
+            request.session['message'] = 'Unauthorized Access'
             return redirect('dashboard_c')
         event = Event.objects.get(EventId=event_id)
         coord = EventCoordinates.objects.filter(Event=event)

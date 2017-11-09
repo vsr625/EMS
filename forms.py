@@ -2,6 +2,7 @@ from django import forms
 from django.core.validators import MinLengthValidator
 from django.db.models import Q
 from django.forms import ModelForm
+import datetime
 
 from .models import Participant, Event, Faculty, SpecialGuest, Coordinator
 
@@ -66,6 +67,11 @@ class EventForm(ModelForm):
             'SpecialGuest': forms.Select(attrs={'class': 'form-control'}),
         }
 
+    def clean(self):
+        cleaned_data = super(EventForm, self).clean()
+        date = cleaned_data.get('Date')
+        if date < datetime.date.today():
+            raise forms.ValidationError("The date cannot be in the past!")
 
 class FacultyForm(ModelForm):
     class Meta:

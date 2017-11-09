@@ -142,7 +142,7 @@ def create_event_view(request):
                 return redirect('dashboard_a')
         else:
             form = EventForm()
-        return render(request, 'EMS/create_event.html', {'form': form, 'heading': 'Create New Event'})
+        return render(request, 'EMS/form_template.html', {'form': form, 'heading': 'Create New Event'})
     else:
         return redirect('home')
 
@@ -158,7 +158,7 @@ def create_faculty_view(request):
                 return redirect('dashboard_a')
         else:
             form = FacultyForm()
-        return render(request, 'EMS/create_event.html', {'form': form, 'heading': 'Create New Faculty'})
+        return render(request, 'EMS/form_template.html', {'form': form, 'heading': 'Create New Faculty'})
     else:
         return redirect('home')
 
@@ -174,7 +174,7 @@ def create_sp_view(request):
                 return redirect('dashboard_a')
         else:
             form = SPForm()
-        return render(request, 'EMS/create_event.html', {'form': form, 'heading': 'Create New Special Guest'})
+        return render(request, 'EMS/form_template.html', {'form': form, 'heading': 'Create New Special Guest'})
     else:
         return redirect('home')
 
@@ -242,7 +242,7 @@ def update_event(request, event_id):
             event_cor = EventCoordinates.objects.filter(Event=Event.objects.get(EventId=event_id))
             form = EventForm(instance=Event.objects.get(EventId=event_id),
                              initial={'Coordinator': event_cor.values_list('Coordinator', flat=True)})
-        return render(request, 'EMS/create_event.html', {'form': form, 'heading': 'Update Event'})
+        return render(request, 'EMS/form_template.html', {'form': form, 'heading': 'Update Event'})
     else:
         return redirect('home')
 
@@ -283,7 +283,7 @@ def create_co_view(request):
                 return redirect('dashboard_a')
         else:
             form = CoordinatorForm()
-        return render(request, 'EMS/create_event.html', {'form': form, 'heading': 'Create New Coordinator'})
+        return render(request, 'EMS/form_template.html', {'form': form, 'heading': 'Create New Coordinator'})
     else:
         return redirect('home')
 

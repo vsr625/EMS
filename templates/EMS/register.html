@@ -11,6 +11,16 @@
         a:hover {
             text-decoration: none;
         }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
@@ -33,7 +43,7 @@
             {% else %}
                 <h5> You have successfully registered</h5>
                 <a href="{% url 'home' %}">
-                        <button class="btn btn-default btn-md center-block btn-block">Return Home</button>
+                    <button class="btn btn-default btn-md center-block btn-block">Return Home</button>
                 </a>
             {% endif %}
         </div>

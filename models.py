@@ -11,6 +11,7 @@ from django.dispatch import receiver
 phone_regex = RegexValidator(regex=r'^\d{10}$', message='Phone number must be 10 digits.')
 register_regex = RegexValidator(regex=r'^1(RV|rv)\d{2}[a-zA-Z]{2}\d{3}$', message='Register Number is Invalid')
 
+
 class Event(models.Model):
     VENUE_LIST = (
         ('s', 'New Sports Complex'),

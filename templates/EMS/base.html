@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Title{% endblock %}</title>
+    <script src="{% static 'material/js/jquery.js' %}"></script>
+    {% include 'material/includes/material_css.html' %}
+    {% include 'material/includes/material_js.html' %}
+    {% block head %} {% endblock %}
+</head>
+
+<body class="blue-grey lighten-5">
+
+{% block navbar %}{% endblock %}
+
+<div class="{% block container_class %}container{% endblock %}">
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

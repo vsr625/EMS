@@ -39,7 +39,7 @@
                     <td>{{ event.Time }}</td>
                     <td>{{ event.get_Venue_display }}</td>
                     <td>{{ event.Prize }}</td>
-                    <td>{{ event.Judge.Name }}</td>
+                    <td>{{ event.Judge.Name|default:'None' }}</td>
                     <td>
                         <a href="{% url 'view_event' event_id=event.EventId %}"
                            class="btn teal darken-3 waves-effect waves-light">View
@@ -65,5 +65,5 @@
         </div>
     {% endif %}
     <br>
-    <a href="{% url 'logout' %}" class="btn waves-effect waves-red">logout</a>
+    <a href="{% url 'logout' %}" class="btn waves-effect waves-red">Logout</a>
 {% endblock %}

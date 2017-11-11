@@ -1,14 +1,11 @@
+import datetime
+
 from django import forms
 from django.core.validators import MinLengthValidator
 from django.db.models import Q
 from django.forms import ModelForm
-import datetime
-
-from django.template import Template
-from material import *
 
 from .models import Participant, Event, Faculty, SpecialGuest, Coordinator
-from material import Layout, Row, Column, Fieldset, Span2, Span3, Span5, Span6, Span10
 
 
 class RegisterParticipant(ModelForm):

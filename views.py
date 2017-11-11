@@ -1,8 +1,8 @@
 from datetime import *
 
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
 
 from EMS.models import Participant, EventParticipates, Event, EventCoordinates, Coordinator
 from .forms import RegisterParticipant, Login, EventForm, FacultyForm, SPForm, UpdateWinner, CoordinatorForm
@@ -309,3 +309,8 @@ def view_event(request, event_id):
                        'type': request.user.profile.type})
     else:
         return redirect('home')
+
+
+# todo implement this
+def generate_view(request):
+    return None

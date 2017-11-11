@@ -31,5 +31,7 @@ urlpatterns = [
         views.register_event_view, name='register_event'),
     url(
         r'^dashboard_c/update_winner/(?P<event_id>[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})',
-        views.update_winner, name='update_winner')
+        views.update_winner, name='update_winner'),
+    url(r'^generate/(?P<event_id>[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})',
+        views.generate_view, name='generate')
 ]

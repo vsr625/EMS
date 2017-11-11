@@ -4,7 +4,11 @@ from django.db.models import Q
 from django.forms import ModelForm
 import datetime
 
+from django.template import Template
+from material import *
+
 from .models import Participant, Event, Faculty, SpecialGuest, Coordinator
+from material import Layout, Row, Column, Fieldset, Span2, Span3, Span5, Span6, Span10
 
 
 class RegisterParticipant(ModelForm):
@@ -16,13 +20,8 @@ class RegisterParticipant(ModelForm):
         model = Participant
         fields = ['Name', 'Password', 'City', 'PhoneNo', 'College', 'MailId', 'RegNo']
         widgets = {
-            'Password': forms.PasswordInput(attrs={'class': 'form-control'}),
-            'MailId': forms.EmailInput(attrs={'class': 'form-control'}),
-            'Name': forms.TextInput(attrs={'class': 'form-control'}),
-            'PhoneNo': forms.NumberInput(attrs={'class': 'form-control'}),
-            'College': forms.TextInput(attrs={'class': 'form-control'}),
-            'RegNo': forms.TextInput(attrs={'class': 'form-control'}),
-            'City': forms.TextInput(attrs={'class': 'form-control'})
+            'Password': forms.PasswordInput(),
+            'PhoneNo': forms.NumberInput(),
         }
 
     def clean(self):
@@ -56,16 +55,6 @@ class EventForm(ModelForm):
     class Meta:
         model = Event
         fields = ['Name', 'Date', 'Time', 'Venue', 'RegistrationFee', 'Prize', 'Judge', 'SpecialGuest']
-        widgets = {
-            'Date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'Time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
-            'Name': forms.TextInput(attrs={'class': 'form-control'}),
-            'RegistrationFee': forms.NumberInput(attrs={'class': 'form-control'}),
-            'Prize': forms.NumberInput(attrs={'class': 'form-control'}),
-            'Venue': forms.Select(attrs={'class': 'form-control'}),
-            'Judge': forms.Select(attrs={'class': 'form-control'}),
-            'SpecialGuest': forms.Select(attrs={'class': 'form-control'}),
-        }
 
     def clean(self):
         cleaned_data = super(EventForm, self).clean()
@@ -73,15 +62,13 @@ class EventForm(ModelForm):
         if date < datetime.date.today():
             raise forms.ValidationError("The date cannot be in the past!")
 
+
 class FacultyForm(ModelForm):
     class Meta:
         model = Faculty
         fields = ['Name', 'PhoneNo', 'MailId', 'RegNo']
         widgets = {
-            'Name': forms.TextInput(attrs={'class': 'form-control'}),
-            'PhoneNo': forms.NumberInput(attrs={'class': 'form-control'}),
-            'MailId': forms.EmailInput(attrs={'class': 'form-control'}),
-            'RegNo': forms.TextInput(attrs={'class': 'form-control'}),
+            'PhoneNo': forms.NumberInput()
         }
 
 
@@ -90,9 +77,7 @@ class SPForm(ModelForm):
         model = SpecialGuest
         fields = ['Name', 'PhoneNo', 'MailId']
         widgets = {
-            'Name': forms.TextInput(attrs={'class': 'form-control'}),
-            'PhoneNo': forms.NumberInput(attrs={'class': 'form-control'}),
-            'MailId': forms.EmailInput(attrs={'class': 'form-control'}),
+            'PhoneNo': forms.NumberInput()
         }
 
 
@@ -102,18 +87,18 @@ class UpdateWinner(ModelForm):
         super(UpdateWinner, self).__init__(*args, **kwargs)
         if e is not None:
             self.fields['Winner'] = forms.ModelChoiceField(queryset=e,
-                                                           widget=forms.Select(attrs={'class': 'form-control'}))
+                                                           widget=forms.Select())
 
     class Meta:
         model = Event
         fields = ['Name', 'Winner']
         widgets = {
-            'Name': forms.TextInput(attrs={'readonly': 'readonly', 'class': 'form-control'}),
+            'Name': forms.TextInput(attrs={'readonly': 'readonly'}),
         }
 
 
 class CoordinatorForm(ModelForm):
-    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    confirm_password = forms.CharField(widget=forms.PasswordInput(),
                                        validators=[MinLengthValidator(8)])
     field_order = ['Name', 'MailId', 'RegNo', 'Password', 'confirm_password']
 
@@ -121,11 +106,8 @@ class CoordinatorForm(ModelForm):
         model = Coordinator
         fields = ['Name', 'RegNo', 'Password', 'PhoneNo', 'MailId']
         widgets = {
-            'Name': forms.TextInput(attrs={'class': 'form-control'}),
-            'PhoneNo': forms.NumberInput(attrs={'class': 'form-control'}),
-            'MailId': forms.EmailInput(attrs={'class': 'form-control'}),
-            'RegNo': forms.TextInput(attrs={'class': 'form-control'}),
-            'Password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'Password': forms.PasswordInput(),
+            'PhoneNo': forms.NumberInput()
         }
 
     def clean(self):

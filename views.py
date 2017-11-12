@@ -1,8 +1,12 @@
 from datetime import *
+from io import BytesIO
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 from EMS.models import Participant, EventParticipates, Event, EventCoordinates, Coordinator
 from .forms import RegisterParticipant, Login, EventForm, FacultyForm, SPForm, UpdateWinner, CoordinatorForm
@@ -298,7 +302,8 @@ def view_event(request, event_id):
         participants_ids = EventParticipates.objects.filter(Event=event).values_list('Participant', flat=True)
         participants = Participant.objects.filter(ID__in=participants_ids)
         return render(request, 'EMS/view_event.html',
-                      {'event': event, 'participants': participants, 'coord': coord, 'type': request.user.profile.type})
+                      {'event': event, 'participants': participants, 'coord': coord, 'type': request.user.profile.type,
+                       'winner': event.Winner})
     elif request.user.profile.type == 'c':
         if not EventCoordinates.objects.filter(Coordinator=Coordinator.objects.get(MailId=request.user.username),
                                                Event=Event.objects.get(EventId=event_id)):
@@ -310,11 +315,26 @@ def view_event(request, event_id):
         participants = Participant.objects.filter(ID__in=participants_ids)
         return render(request, 'EMS/view_event.html',
                       {'event': event, 'participants': participants, 'coord': coord,
-                       'type': request.user.profile.type})
+                       'type': request.user.profile.type, 'winner': event.Winner})
     else:
         return redirect('home')
 
 
-# todo implement this
-def generate_view(request):
+@login_required(login_url='/login_a')
+def generate_view(request, event_id):
+    if request.user.profile.type == 'a':
+        event = Event.objects.get(EventId=event_id)
+        pdf = render_to_pdf('EMS/certificate.html', {'event': event})
+        return pdf
+    else:
+        return redirect('home')
+
+
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None

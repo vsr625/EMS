@@ -42,7 +42,7 @@
             </thead>
             <tbody>
             {% for p in participants %}
-                <tr>
+                <tr {% if winner == p %} class="green" {% endif %}>
                     <td>{{ p.Name }}</td>
                     <td>{{ p.MailId }}</td>
                     <td>{{ p.PhoneNo }}</td>
@@ -57,9 +57,17 @@
     <br>
     {% if type == 'a' %}
         <a href="{% url 'dashboard_a' %}" class="btn light-blue accent-3 waves-effect waves-light">Back to Dashboard</a>
+        {% if event.Winner is not None %}
+            <a href="{% url 'generate' event_id=event.EventId %}"
+               class="btn light-blue accent-3 waves-effect waves-light">Generate Certificate</a>
+        {% endif %}
         <a href="{% url 'delete_event' event_id=event.EventId %}" class="btn red darken-3 waves-effect waves-light">Delete
             Event</a>
     {% else %}
         <a href="{% url 'dashboard_c' %}" class="btn light-blue accent-3 waves-effect waves-light">Back to Dashboard</a>
+        {% if event.Winner is not None %}
+            <a href="{% url 'generate' event_id=event.EventId %}"
+               class="btn light-blue accent-3 waves-effect waves-light">Generate Certificate</a>
+        {% endif %}
     {% endif %}
 {% endblock %}

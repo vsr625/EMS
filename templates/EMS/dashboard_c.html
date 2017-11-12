@@ -1,37 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Dashboard</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style>
-        a:hover {
-            text-decoration: none;
-        }
+{% extends 'EMS/base.html' %}
 
-        .custom {
-            width: 190px !important;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
+{% block title %} Coordinator Console {% endblock %}
+
+{% block content %}
     <br>
-    <h3>Event Management System</h3>
-    <h4>Coordinator console</h4>
+    <h4>Event Management System</h4>
+    <h5>Coordinator console</h5>
     {% if message %}
-        <div class="alert alert-success alert-dismissable">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <div class="green-text">
             {{ message }}
         </div>
+        <br>
     {% endif %}
-    <br>
     <strong>Past Events</strong>
     {% if past_events %}
-        <table class="table table-hover table-bordered">
+        <table class="striped bordered highlight z-depth-1">
             <thead>
             <tr>
                 <th>Event Name</th>
@@ -55,12 +38,13 @@
                     <td>{{ event.Judge.Name }}</td>
                     <td>
                         <a href="{% url 'view_event' event_id=event.EventId %}">
-                            <input type="button" class="btn btn-info center-block" value="View Event">
+                            <input type="button" class="btn teal darken-3 waves-effect waves-light" value="View Event">
                         </a>
                     </td>
                     <td>
                         <a href="{% url 'update_winner' event_id=event.EventId %}">
-                            <input type="button" class="btn btn-danger center-block" value="Update Winner">
+                            <input type="button" class="btn orange darken-3 waves-effect waves-light"
+                                   value="Update Winner">
                         </a>
                     </td>
                 </tr>
@@ -68,13 +52,14 @@
             </tbody>
         </table>
     {% else %}
-        <div class="alert alert-info">
+        <div class="red-text">
             No events to display
         </div>
     {% endif %}
+    <br>
     <strong> Upcoming Events</strong>
     {% if upcoming_events %}
-        <table class="table table-hover table-bordered">
+        <table class="bordered striped highlight z-depth-1">
             <thead>
             <tr>
                 <th>Event Name</th>
@@ -94,10 +79,11 @@
                     <td>{{ event.Time }}</td>
                     <td>{{ event.get_Venue_display }}</td>
                     <td>{{ event.Prize }}</td>
-                    <td>{{ event.Judge.Name }}</td>
+                    <td>{{ event.Judge.Name|default:'None' }}</td>
                     <td>
                         <a href="{% url 'view_event' event_id=event.EventId %}">
-                            <input type="button" class="btn btn-info center-block" value="View Details">
+                            <input type="button" class="btn teal darken-3 waves-effect waves-light"
+                                   value="View Details">
                         </a>
                     </td>
                 </tr>
@@ -105,13 +91,12 @@
             </tbody>
         </table>
     {% else %}
-        <div class="alert alert-info">
+        <div class="red-text">
             No events to display
         </div>
     {% endif %}
+    <br>
     <a href="{% url 'logout' %}">
-        <input class="btn btn-warning btn-md" type="button" value="logout">
+        <input class="btn waves-effect waves-red" type="button" value="Logout">
     </a>
-</div>
-</body>
-</html>
+{% endblock %}

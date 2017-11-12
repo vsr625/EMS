@@ -1,48 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Event Management System</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+{% extends 'EMS/base.html' %}
+{% block title %} Event Management System {% endblock %}
+
+{% block head %}
     <style>
         .custom {
-            width: 150px !important;
-        }
-        a:hover {
-            text-decoration: none;
+            width: 225px !important;
         }
     </style>
-</head>
-<body>
-<div class="container">
+{% endblock %}
+
+{% block content %}
     <br>
-    <div class="text-center"><h2>Welcome to Event Management Sytem</h2></div>
-    <br>
-    <div class="btn-gruop">
+    <div class="center-align"><h4>Welcome to Event Management Sytem</h4>
+        <br>
         <a href="{% url 'register' %}">
-            <input type="button" class="btn btn-info btn-md center-block custom" value="Register Participant">
+            <input type="button" class="waves-effect waves-light btn blue custom" value="Register Participant">
         </a>
         <br>
         <br>
         <a href="{% url 'login_p' %}">
-            <input type="button" class="btn btn-info btn-md center-block custom" value="Login Participant">
+            <input type="button" class="waves-effect waves-light btn blue custom" value="Login Participant">
         </a>
         <br>
         <br>
         <a href="{% url 'login_c' %}">
-            <input type="button" class="btn btn-info btn-md center-block custom" value="Login Coordinator">
+            <input type="button" class="waves-effect waves-light btn blue custom" value="Login Coordinator">
         </a>
         <br>
         <br>
         <a href="{% url 'login_a' %}">
-            <input type="button" class="btn btn-info btn-md center-block custom" value="Login Admin">
+            <input type="button" class="waves-effect waves-light btn blue custom" value="Login Admin">
         </a>
         <br>
         <br>
     </div>
-</div>
-</body>
-</html>
+{% endblock %}

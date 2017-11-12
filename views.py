@@ -256,7 +256,9 @@ def delete_event(request, event_id):
             request.session['message'] = 'Successfully deleted event ' + name
             return redirect('dashboard_a')
         else:
-            return render(request, 'EMS/delete_event.html', {'heading': 'Are you sure you want to delete the event?'})
+            return render(request, 'EMS/delete_event.html', {
+                'heading': 'Are you sure you want to delete the event ' + Event.objects.get(
+                    EventId=event_id).Name + '?'})
     else:
         return redirect('home')
 
@@ -293,7 +295,8 @@ def view_event(request, event_id):
     if request.user.profile.type == 'a':
         event = Event.objects.get(EventId=event_id)
         coord = EventCoordinates.objects.filter(Event=event)
-        participants = EventParticipates.objects.filter(Event=event)
+        participants_ids = EventParticipates.objects.filter(Event=event).values_list('Participant', flat=True)
+        participants = Participant.objects.filter(ID__in=participants_ids)
         return render(request, 'EMS/view_event.html',
                       {'event': event, 'participants': participants, 'coord': coord, 'type': request.user.profile.type})
     elif request.user.profile.type == 'c':
@@ -303,7 +306,8 @@ def view_event(request, event_id):
             return redirect('dashboard_c')
         event = Event.objects.get(EventId=event_id)
         coord = EventCoordinates.objects.filter(Event=event)
-        participants = EventParticipates.objects.filter(Event=event)
+        participants_ids = EventParticipates.objects.filter(Event=event).values_list('Participant', flat=True)
+        participants = Participant.objects.filter(ID__in=participants_ids)
         return render(request, 'EMS/view_event.html',
                       {'event': event, 'participants': participants, 'coord': coord,
                        'type': request.user.profile.type})

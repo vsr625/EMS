@@ -1,0 +1,23 @@
+{% extends 'EMS/base.html' %}
+
+{% block content %}
+    <div class="row valign">
+        <div class="col s12 m8 offset-m2 l8 offset-l2">
+            <div class="card">
+                <form method="POST">
+                    <div class="card-content">
+                        <span class="card-title grey-text text-darken-2">{% block formtitle %}Form{% endblock %}</span>
+                        {% csrf_token %}
+                        {% block formbody %}{% endblock %}
+                    </div>
+                    <div class="card-action">
+                        <div class="right-align">
+                            <button class="waves-effect waves-light btn blue" type="submit">Submit</button>
+                            <a class="waves-effect waves-light btn btn red" href="{% block cancelurl %}{% endblock %}">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

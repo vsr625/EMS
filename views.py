@@ -322,8 +322,18 @@ def view_event(request, event_id):
 
 @login_required(login_url='/login_a')
 def generate_view(request, event_id):
+    event = Event.objects.get(EventId=event_id)
     if request.user.profile.type == 'a':
-        event = Event.objects.get(EventId=event_id)
+        if event.Winner is None:
+            request.session['message'] = 'Winner not announced for this event'
+            return redirect('dashboard_a')
+        pdf = render_to_pdf('EMS/certificate.html', {'event': event})
+        return pdf
+    elif request.user.profile.type == 'c' or event.Winner is None:
+        if not EventCoordinates.objects.filter(Coordinator=Coordinator.objects.get(MailId=request.user.username),
+                                               Event=Event.objects.get(EventId=event_id)):
+            request.session['message'] = 'Unauthorized Access'
+            return redirect('dashboard_c')
         pdf = render_to_pdf('EMS/certificate.html', {'event': event})
         return pdf
     else:

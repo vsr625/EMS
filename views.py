@@ -1,5 +1,6 @@
 from datetime import *
 from io import BytesIO
+from uuid import uuid4
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
-from EMS.models import Participant, EventParticipates, Event, EventCoordinates, Coordinator
+from EMS.models import Participant, EventParticipates, Event, EventCoordinates, Coordinator, Faculty
 from .forms import RegisterParticipant, Login, EventForm, FacultyForm, SPForm, UpdateWinner, CoordinatorForm
 
 
@@ -348,3 +349,40 @@ def render_to_pdf(template_src, context_dict={}):
     if not pdf.err:
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
+
+
+def demo1(request, num):
+    if num is None:
+        num = 10
+    num = int(num)
+    for i in range(num):
+        mailid = 'p' + str(i) + '@p.com'
+        name = 'Participant' + str(i)
+        new_par = Participant(ID=uuid4(), MailId=mailid, Name=name, College='RVCE', PhoneNo='1234567890',
+                              Password='123456789')
+        new_par.save()
+    return redirect('home')
+
+
+def demo2(request, num):
+    if num is None:
+        num = 10
+    num = int(num)
+    if not Event.objects.all():
+        for i in range(num):
+            event = Event(EventId=uuid4(), Name='Event' + str(i), Date=datetime.date(datetime.today()),
+                          Time=datetime.time(datetime.now()),
+                          Venue='c')
+            event.save()
+    if not Faculty.objects.all():
+        for i in range(10):
+            f = Faculty(FacultyId=uuid4(), Name='Faculty' + str(i), PhoneNo='1234567890',
+                        MailId='faculty' + str(i) + '@f.com')
+            f.save()
+    if not Coordinator.objects.all():
+        for i in range(10):
+            c = Coordinator(CoordinatorId=uuid4(), Name='Coordinator' + str(i), Password='123456789',
+                            MailId='c' + str(i) + '@c.com',
+                            PhoneNo='1234567890', RegNo='1RV15CS01' + str(i))
+            c.save()
+    return redirect('home')

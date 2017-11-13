@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db import models
 from django.db.models.signals import post_save, post_delete
-
 # Create your models here.
 from django.dispatch import receiver
 
@@ -82,7 +81,7 @@ def delete_co_user(sender, instance, **kwargs):
 
 
 class Participant(models.Model):
-    ID = models.UUIDField(primary_key=True, default=uuid.uuid4())
+    ID = models.UUIDField(primary_key=True, default=uuid.uuid4)
     Name = models.CharField(max_length=20)
     Password = models.CharField(max_length=25, validators=[MinLengthValidator(8)])
     City = models.CharField(max_length=20)

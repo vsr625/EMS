@@ -1,3 +1,4 @@
+import os
 from datetime import *
 from io import BytesIO
 
@@ -9,6 +10,7 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa
 
 from EMS.models import Participant, EventParticipates, Event, EventCoordinates, Coordinator, Faculty
+from Event import settings
 from .forms import RegisterParticipant, Login, EventForm, FacultyForm, SPForm, UpdateWinner, CoordinatorForm
 
 
@@ -344,10 +346,21 @@ def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
     html = template.render(context_dict)
     result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result, link_callback=link_callback)
     if not pdf.err:
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
+
+
+def link_callback(uri, rel):
+    sUrl = settings.STATIC_URL  # Typically /static/
+    sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
+    path = None
+    if uri.startswith(sUrl):
+        path = os.path.join(sRoot, uri.replace(sUrl, ""))
+    if not os.path.isfile(path):
+        raise Exception('media URI must start with %s or %s' % (sUrl))
+    return path
 
 
 def demo1(request, num):

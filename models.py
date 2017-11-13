@@ -17,7 +17,7 @@ class Event(models.Model):
         ('i', 'IEM Auditorium'),
         ('m', 'Mini Canteen'),
         ('c', 'CSE Department'),
-        ('m', 'Mathematics Department')
+        ('d', 'Mathematics Department')
     )
     EventId = models.UUIDField(primary_key=True, default=uuid.uuid4)
     Name = models.CharField(max_length=20, unique=True)

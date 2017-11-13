@@ -1,6 +1,5 @@
 from datetime import *
 from io import BytesIO
-from uuid import uuid4
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -108,8 +107,8 @@ def dashboard_c_view(request):
         coordinator = Coordinator.objects.get(MailId=request.user.username)
         date_now = datetime.date(datetime.now())
         eventcoordinator = EventCoordinates.objects.filter(Coordinator=coordinator).values_list('Event', flat=True)
-        past_events = Event.objects.filter(EventId__in=eventcoordinator).filter(Date__lt=date_now)
-        upcoming_events = Event.objects.filter(EventId__in=eventcoordinator).filter(Date__gte=date_now)
+        past_events = Event.objects.filter(EventId__in=eventcoordinator).filter(Date__lte=date_now)
+        upcoming_events = Event.objects.filter(EventId__in=eventcoordinator).filter(Date__gt=date_now)
         return render(request, 'EMS/dashboard_c.html',
                       {'past_events': past_events, 'upcoming_events': upcoming_events, 'message': message})
     else:
@@ -358,7 +357,7 @@ def demo1(request, num):
     for i in range(num):
         mailid = 'p' + str(i) + '@p.com'
         name = 'Participant' + str(i)
-        new_par = Participant(ID=uuid4(), MailId=mailid, Name=name, College='RVCE', PhoneNo='1234567890',
+        new_par = Participant(MailId=mailid, Name=name, College='RVCE', PhoneNo='1234567890',
                               Password='123456789')
         new_par.save()
     return redirect('home')
@@ -370,18 +369,18 @@ def demo2(request, num):
     num = int(num)
     if not Event.objects.all():
         for i in range(num):
-            event = Event(EventId=uuid4(), Name='Event' + str(i), Date=datetime.date(datetime.today()),
+            event = Event(Name='Event' + str(i), Date=datetime.date(datetime.today()),
                           Time=datetime.time(datetime.now()),
                           Venue='c')
             event.save()
     if not Faculty.objects.all():
         for i in range(10):
-            f = Faculty(FacultyId=uuid4(), Name='Faculty' + str(i), PhoneNo='1234567890',
+            f = Faculty(Name='Faculty' + str(i), PhoneNo='1234567890',
                         MailId='faculty' + str(i) + '@f.com')
             f.save()
     if not Coordinator.objects.all():
         for i in range(10):
-            c = Coordinator(CoordinatorId=uuid4(), Name='Coordinator' + str(i), Password='123456789',
+            c = Coordinator(Name='Coordinator' + str(i), Password='123456789',
                             MailId='c' + str(i) + '@c.com',
                             PhoneNo='1234567890', RegNo='1RV15CS01' + str(i))
             c.save()

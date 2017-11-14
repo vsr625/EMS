@@ -15,7 +15,9 @@ from .forms import RegisterParticipant, Login, EventForm, FacultyForm, SPForm, U
 
 
 def homepage_view(request):
-    return render(request, 'EMS/homepage.html')
+    message = request.session.get('message')
+    request.session['message'] = None
+    return render(request, 'EMS/homepage.html', {'message': message})
 
 
 def register_view(request):
@@ -23,7 +25,8 @@ def register_view(request):
         form = RegisterParticipant(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'EMS/register.html', {'success': True})
+            request.session['message'] = 'Registration Successful, Now you can login'
+            return redirect('home')
     else:
         form = RegisterParticipant()
     return render(request, 'EMS/register.html', {'form': form})

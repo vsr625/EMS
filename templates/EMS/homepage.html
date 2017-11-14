@@ -33,5 +33,10 @@
         </a>
         <br>
         <br>
+        {% if message %}
+            <div class="green-text">
+                <p>{{ message }}</p>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

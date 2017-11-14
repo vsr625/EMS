@@ -26,9 +26,9 @@ class Event(models.Model):
     Venue = models.CharField(max_length=15, choices=VENUE_LIST, default='s')
     RegistrationFee = models.IntegerField(default=0)
     Prize = models.IntegerField(default=0)
-    Judge = models.ForeignKey('Faculty', on_delete=None, blank=True, null=True, default=None)
-    Winner = models.ForeignKey('Participant', on_delete=None, blank=True, null=True, default=None)
-    SpecialGuest = models.OneToOneField('SpecialGuest', related_name='special_guest', on_delete=None, default=None,
+    Judge = models.ForeignKey('Faculty', on_delete=models.SET_NULL, blank=True, null=True)
+    Winner = models.ForeignKey('Participant', on_delete=models.SET_NULL, blank=True, null=True)
+    SpecialGuest = models.OneToOneField('SpecialGuest', related_name='special_guest', on_delete=models.SET_NULL,
                                         blank=True, null=True)
 
     class Meta:

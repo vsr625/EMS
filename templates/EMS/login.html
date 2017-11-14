@@ -27,6 +27,9 @@
                         {% endform %}
                     {% else %}
                         {% form form=form %}
+                            {% part form.username prefix %} <i class="material-icons prefix">email</i>{% endpart %}
+                            {% part form.password prefix %}<i class="material-icons prefix">lock_open</i>
+                            {% endpart %}
                         {% endform %}
                     {% endif %}
                     <input type="submit" class='btn green accent-4 waves-effect waves-light' value="Login"/>

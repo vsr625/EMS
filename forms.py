@@ -4,6 +4,7 @@ from django import forms
 from django.core.validators import MinLengthValidator
 from django.db.models import Q
 from django.forms import ModelForm
+from django.template import Template
 
 from .models import Participant, Event, Faculty, SpecialGuest, Coordinator
 
@@ -12,6 +13,22 @@ class RegisterParticipant(ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}),
                                        validators=[MinLengthValidator(8)])
     field_order = ['Name', 'Password', 'confirm_password', 'City', 'PhoneNo', 'College', 'MailId', 'RegNo']
+    template = Template("""
+        {% load material_form %}
+        {% part form.Name prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
+        {% part form.MailId prefix %}<i class="material-icons prefix">email</i>{% endpart %}
+        {% part form.Password prefix %}<i class="material-icons prefix">lock_open</i>
+        {% endpart %}
+        {% part form.confirm_password prefix %}<i class="material-icons prefix">lock_open</i>
+        {% endpart %}
+        {% part form.City prefix %}<i class="material-icons prefix">location_city</i>
+        {% endpart %}
+        {% part form.PhoneNo prefix %}<i class="material-icons prefix">phone</i>
+        {% endpart %}
+        {% part form.College prefix %}<i class="material-icons prefix">account_balance</i>
+        {% endpart %}
+        {% part form.RegNo prefix %}<i class="material-icons prefix">info</i> {% endpart %}
+    """)
 
     class Meta:
         model = Participant
@@ -42,6 +59,17 @@ class EventForm(ModelForm):
     Coordinator = forms.ModelMultipleChoiceField(queryset=Coordinator.objects.all(),
                                                  widget=forms.CheckboxSelectMultiple(),
                                                  required=False)
+    template = Template(""" 
+        {% load material_form %}
+        {% part form.Name prefix %} <i class="material-icons prefix">account_box</i> {% endpart %}
+        {% part form.Date prefix %} <i class="material-icons prefix">event</i> {% endpart %}
+        {% part form.Time prefix %} <i class="material-icons prefix">access_time</i> {% endpart %}
+        {% part form.Venue prefix %} <i class="material-icons prefix">place</i> {% endpart %}
+        {% part form.RegistrationFee prefix %} <i class="material-icons prefix">attach_money</i> {% endpart %}
+        {% part form.Prize prefix %} <i class="material-icons prefix">bookmark</i> {% endpart %}
+        {% part form.Judge prefix %} <i class="material-icons prefix">account_balance</i> {% endpart %}
+        {% part form.SpecialGuest prefix %} <i class="material-icons prefix">supervisor_account</i> {% endpart %}
+    """)
 
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
@@ -61,6 +89,14 @@ class EventForm(ModelForm):
 
 
 class FacultyForm(ModelForm):
+    template = Template(""" 
+        {% load material_form %}
+        {% part form.Name prefix %} <i class="material-icons prefix">account_box</i> {% endpart %}
+        {% part form.PhoneNo prefix %}<i class="material-icons prefix">phone</i>  {% endpart %}
+        {% part form.MailId prefix %}<i class="material-icons prefix">email</i>{% endpart %}
+        {% part form.RegNo prefix %}<i class="material-icons prefix">info</i> {% endpart %}
+    """)
+
     class Meta:
         model = Faculty
         fields = ['Name', 'PhoneNo', 'MailId', 'RegNo']
@@ -70,6 +106,12 @@ class FacultyForm(ModelForm):
 
 
 class SPForm(ModelForm):
+    template = Template(""" 
+        {% load material_form %}
+        {% part form.Name prefix %} <i class="material-icons prefix">account_box</i> {% endpart %}
+        {% part form.PhoneNo prefix %}<i class="material-icons prefix">phone</i>  {% endpart %}
+        {% part form.MailId prefix %}<i class="material-icons prefix">email</i>{% endpart %}
+    """)
     class Meta:
         model = SpecialGuest
         fields = ['Name', 'PhoneNo', 'MailId']
@@ -98,7 +140,15 @@ class CoordinatorForm(ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput(),
                                        validators=[MinLengthValidator(8)])
     field_order = ['Name', 'MailId', 'RegNo', 'Password', 'confirm_password']
-
+    template = Template(""" 
+        {% load material_form %}
+        {% part form.Name prefix %} <i class="material-icons prefix">account_box</i> {% endpart %}
+        {% part form.PhoneNo prefix %}<i class="material-icons prefix">phone</i>  {% endpart %}
+        {% part form.MailId prefix %}<i class="material-icons prefix">email</i>{% endpart %}
+        {% part form.RegNo prefix %}<i class="material-icons prefix">info</i> {% endpart %}
+        {% part form.Password prefix %}<i class="material-icons prefix">lock_open</i>{% endpart %}
+        {% part form.confirm_password prefix %}<i class="material-icons prefix">lock_open</i>{% endpart %}
+    """)
     class Meta:
         model = Coordinator
         fields = ['Name', 'RegNo', 'Password', 'PhoneNo', 'MailId']

@@ -4,7 +4,7 @@
 {% block title %} {{ heading }} {% endblock %}
 {% block formtitle %} {{ heading }} {% endblock %}
 {% block formbody %}
-    {% form form=form %}{% endform %}
+    {% form form=form %} {% include form.template %} {% endform %}
 {% endblock %}
 {% block cancelurl %}
     {% url 'dashboard_a' %}

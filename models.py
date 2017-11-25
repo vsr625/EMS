@@ -7,6 +7,7 @@ from django.db.models.signals import post_save, post_delete
 # Create your models here.
 from django.dispatch import receiver
 
+name_regex = RegexValidator(regex=r'^[a-zA-Z\s]*$', message='Name should only contain characters')
 phone_regex = RegexValidator(regex=r'^\d{10}$', message='Phone number must be 10 digits.')
 register_regex = RegexValidator(regex=r'^1(RV|rv)\d{2}[a-zA-Z]{2}\d{3}$', message='Register Number is Invalid')
 
@@ -20,7 +21,7 @@ class Event(models.Model):
         ('d', 'Mathematics Department')
     )
     EventId = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    Name = models.CharField(max_length=20, unique=True)
+    Name = models.CharField(max_length=20, unique=True, validators=[name_regex])
     Date = models.DateField()
     Time = models.TimeField()
     Venue = models.CharField(max_length=15, choices=VENUE_LIST, default='s')
@@ -40,7 +41,7 @@ class Event(models.Model):
 
 class Faculty(models.Model):
     FacultyId = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    Name = models.CharField(max_length=20)
+    Name = models.CharField(max_length=20, validators=[name_regex])
     PhoneNo = models.CharField(max_length=15, validators=[phone_regex])
     MailId = models.EmailField(unique=True)
     RegNo = models.CharField(unique=True, max_length=10, blank=True, null=True)
@@ -54,7 +55,7 @@ class Faculty(models.Model):
 
 class Coordinator(models.Model):
     CoordinatorId = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    Name = models.CharField(max_length=20)
+    Name = models.CharField(max_length=20, validators=[name_regex])
     RegNo = models.CharField(unique=True, max_length=10)
     PhoneNo = models.CharField(max_length=15, validators=[phone_regex])
     MailId = models.EmailField(unique=True)
@@ -82,7 +83,7 @@ def delete_co_user(sender, instance, **kwargs):
 
 class Participant(models.Model):
     ID = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    Name = models.CharField(max_length=20)
+    Name = models.CharField(max_length=20, validators=[name_regex])
     Password = models.CharField(max_length=25, validators=[MinLengthValidator(8)])
     City = models.CharField(max_length=20)
     PhoneNo = models.CharField(validators=[phone_regex], max_length=15)
@@ -112,7 +113,7 @@ def delete_p_user(sender, instance, **kwargs):
 
 class SpecialGuest(models.Model):
     GuestID = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    Name = models.CharField(max_length=20)
+    Name = models.CharField(max_length=20, validators=[name_regex])
     PhoneNo = models.CharField(max_length=15, validators=[phone_regex])
     MailId = models.EmailField(default=None, null=False, unique=True)
 

@@ -8,7 +8,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 name_regex = RegexValidator(regex=r'^[a-zA-Z\s]*$', message='Name should only contain characters')
-phone_regex = RegexValidator(regex=r'^\d{10}$', message='Phone number must be 10 digits.')
+phone_regex = RegexValidator(regex=r'^[789]\d{9}$', message='Phone number must be 10 digits.')
 register_regex = RegexValidator(regex=r'^1(RV|rv)\d{2}[a-zA-Z]{2}\d{3}$', message='Register Number is Invalid')
 
 

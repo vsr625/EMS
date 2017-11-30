@@ -186,7 +186,16 @@ def create_sp_view(request):
         return render(request, 'EMS/form_template.html', {'form': form, 'heading': 'Create New Special Guest'})
     else:
         return redirect('home')
+        # pp = Event.objects.values('Winner').annotate(dcount = Count('Winner')).filter(dcount__gte = 2).values_list('Winner', flat=True)
+        # par = Participant.objects.filter(ID__in=pp)
+        # for p in par:
+        #     print(p.Name)
 
+        # participantss = EventParticipates.objects.values('Participant').annotate(dcount = Count('Participant')).filter(dcount__gte = 2).values_list('Participant', flat = True)
+        # par = Participant.objects.filter(ID__in=participantss)
+        # for p in par:
+        #     print(p.Name)
+        # print(participantss)
 
 @login_required(login_url='/login_c')
 def update_winner(request, event_id):

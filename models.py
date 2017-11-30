@@ -8,7 +8,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 name_regex = RegexValidator(regex=r'^[a-zA-Z\s]*$', message='Name should only contain characters')
-phone_regex = RegexValidator(regex=r'^[789]\d{9}$', message='Phone number must be 10 digits.')
+phone_regex = RegexValidator(regex=r'^[789]\d{9}$', message='Invalid Phone Number')
 register_regex = RegexValidator(regex=r'^1(RV|rv)\d{2}[a-zA-Z]{2}\d{3}$', message='Register Number is Invalid')
 
 
@@ -44,7 +44,7 @@ class Faculty(models.Model):
     Name = models.CharField(max_length=20, validators=[name_regex])
     PhoneNo = models.CharField(max_length=15, validators=[phone_regex])
     MailId = models.EmailField(unique=True)
-    RegNo = models.CharField(unique=True, max_length=10, blank=True, null=True)
+    RegNo = models.CharField(unique=True, max_length=10, blank=True, null=True, validators=[register_regex])
 
     class Meta:
         ordering = ["Name"]
@@ -56,7 +56,7 @@ class Faculty(models.Model):
 class Coordinator(models.Model):
     CoordinatorId = models.UUIDField(primary_key=True, default=uuid.uuid4)
     Name = models.CharField(max_length=20, validators=[name_regex])
-    RegNo = models.CharField(unique=True, max_length=10)
+    RegNo = models.CharField(unique=True, max_length=10, validators=[register_regex])
     PhoneNo = models.CharField(max_length=15, validators=[phone_regex])
     MailId = models.EmailField(unique=True)
     Password = models.CharField(max_length=25, validators=[MinLengthValidator(8)])

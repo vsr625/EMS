@@ -8,11 +8,12 @@ class EventAdmin(admin.ModelAdmin):
 
 
 class ParticipantAdmin(admin.ModelAdmin):
-    list_display = ('Name', 'PhoneNo', 'City', 'College', 'MailId')
+    #changing the order of display
+    list_display = ('Name', 'City', 'PhoneNo', 'MailId', 'College')
 
 
 class FacultyAdmin(admin.ModelAdmin):
-    list_display = ('Name', 'PhoneNo', 'MailId')
+    list_display = ('Name', 'MailId', 'PhoneNo')
 
 
 class CoordinatorAdmin(admin.ModelAdmin):
@@ -20,7 +21,7 @@ class CoordinatorAdmin(admin.ModelAdmin):
 
 
 class SpecialGuestAdmin(admin.ModelAdmin):
-    list_display = ('Name', 'MailId', 'PhoneNo')
+    list_display = ('Name', 'PhoneNo', 'MailId')
 
 
 admin.site.site_header = "Event Management System Administration"
@@ -31,4 +32,4 @@ admin.site.register(Coordinator, CoordinatorAdmin)
 admin.site.register(Faculty, FacultyAdmin)
 admin.site.register(SpecialGuest, SpecialGuestAdmin)
 admin.site.register(EventParticipates)
-admin.site.register(EventCoordinates)
+#admin.site.register(EventCoordinates)

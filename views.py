@@ -387,6 +387,13 @@ def demo1(request, num):
         new_par.save()
     return redirect('home')
 
+def demo3(request, num):
+    for i in range(10):
+        mailid = 's' + str(i) + '@mydomain.com'
+        name = 'Bot' + str(i)
+        new_par = Participant(MailId=mailid, Name=name, College='RVCE', PhoneNo = '123456789' + str(i), Password = '123456789')
+        new_par.save()
+    return redirect('home')
 
 def demo2(request, num):
     if num is None:
